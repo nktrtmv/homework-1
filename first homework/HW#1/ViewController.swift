@@ -21,15 +21,32 @@ class ViewController: UIViewController {
     
     func getRandomColorsSet() -> Set<UIColor>{
         var colors = Set<UIColor>()
+        var hex, hexc : String
         while colors.count < views.count {
-            colors.insert(UIColor(
-                red: .random(in: 0...1),
-                green: .random(in: 0...1),
-                blue: .random(in: 0...1),
-                alpha: 1)
-            )
+            hex = getRandomHex()
+            hexc = String(hex[hex.index(hex.startIndex, offsetBy: 1)...])
+            let scan = Scanner(string: hexc)
+            var num: UInt64 = 0
+            scan.scanHexInt64(&num)
+            colors.insert(UIColor(red: CGFloat((num & 0xff000000) >> 24) / 255,
+                                  green: CGFloat((num & 0x00ff0000) >> 16) / 255,
+                                  blue: CGFloat((num & 0x0000ff00) >> 8) / 255,
+                                  alpha: CGFloat(num & 0x000000ff) / 255))
         }
         return colors
+    }
+    
+    
+    func getRandomHex() -> String {
+        var color = "#"
+        let numbers = [0,1,2,3,4,5,6, 7, 8, 9]
+        let letters = ["a","b","c","d","e","f"]
+        while color.count < 9{
+            color += Int.random(in: 0..<2) == 0
+            ? String(numbers[Int.random(in: 0..<10)])
+            : String(letters[Int.random(in: 0..<6)])
+        }
+        return color
     }
     
     @IBAction func changeColorButtonPressed(_ sender: Any) {
